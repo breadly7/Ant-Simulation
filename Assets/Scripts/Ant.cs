@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Ant : MonoBehaviour
 {
@@ -76,8 +75,7 @@ public class Ant : MonoBehaviour
 		foodColliders = new Collider2D[1];
 		homePos = transform.position;
 
-		const int maxPerceivedPheromones = 1024;
-		pheromoneEntries = new PerceptionMap.Entry[maxPerceivedPheromones];
+		pheromoneEntries = new PerceptionMap.Entry[4096];
 		nextDirUpdateTime = Random.value * settings.timeBetweenDirUpdate;
 		colDst = settings.collisionRadius / 2f;
 		deathTime = Time.time + settings.lifetime + Random.Range(0, settings.lifetime / 2f);
@@ -290,7 +288,7 @@ public class Ant : MonoBehaviour
 			}
 		}
 	}
-
+	
 	void HandlePheromoneSteering()
 	{
 		if (Time.time > nextDirUpdateTime)
@@ -315,20 +313,28 @@ public class Ant : MonoBehaviour
 			{
 				sensorData[i] = 0;
 				int numPheromones = 0;
+				int numPositivePheromones = 0;
+				
 				if (currentState == State.SearchingForFood && settings.useFoodMarkers)
 				{
-					numPheromones = colony.foodMarkers.GetAllInCircle(pheromoneEntries, sensors[i]);
+					numPheromones = colony.foodMarkers.GetAllInCircle(pheromoneEntries, sensors[i], 0);
+					numPositivePheromones = numPheromones;
 				}
 				if (currentState == State.ReturningHome && settings.useHomeMarkers)
 				{
-					numPheromones = colony.homeMarkers.GetAllInCircle(pheromoneEntries, sensors[i]);
+					numPheromones = colony.homeMarkers.GetAllInCircle(pheromoneEntries, sensors[i], 0);
+					numPositivePheromones = numPheromones;
 				}
-				for (int j = 0; j < numPheromones; j++)
+				
+				numPheromones += colony.enemyHomeMarkers.GetAllInCircle(pheromoneEntries, sensors[i], numPositivePheromones);
+				
+				for (int j = 0; j < numPheromones - 1; j++)
 				{
+
 					float evaporateT = ((currentTime - pheromoneEntries[j].creationTime) / settings.pheromoneEvaporateTime);
 					float strength = Mathf.Clamp01(1 - evaporateT);
 					//strength = strength * strength;
-					sensorData[i] += strength;
+					sensorData[i] += (j < numPositivePheromones) ? strength : -strength;
 				}
 			}
 

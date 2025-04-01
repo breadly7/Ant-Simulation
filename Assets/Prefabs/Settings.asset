@@ -12,25 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b92ed9b6dc884224a9774b179c124c1, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  maxSpeed: 1.6
-  acceleration: 3
-  collisionAvoidSteerStrength: 5
+  maxSpeed: 1
+  acceleration: 0.2
+  collisionAvoidSteerStrength: 7
   targetSteerStrength: 3
   randomSteerStrength: 0.6
   randomSteerMaxDuration: 1
-  dstBetweenMarkers: 0.7
-  pheremoneEvaporateTime: 45
   timeBetweenDirUpdate: 0.15
   collisionRadius: 0.15
-  antennaDst: 0.25
-  homingForce: 0
-  lifetime: 150
+  dstBetweenMarkers: 0.7
+  pheromoneEvaporateTime: 45
+  pheromoneRunOutTime: 30
+  pheromoneWeight: 1
+  perceptionRadius: 2.5
   useHomeMarkers: 1
   useFoodMarkers: 1
-  useDeath: 0
-  pheremoneRunOutTime: 30
-  pheremoneWeight: 1
-  perceptionRad: 2.5
   sensorSize: 0.75
   sensorDst: 1.25
   sensorSpacing: 1
+  antennaDst: 0.2
+  lifetime: 150
+  useDeath: 0

@@ -11,6 +11,7 @@ public class AntColony : MonoBehaviour {
 	public bool replenishDead;
 
 	public PerceptionMap homeMarkers;
+	public PerceptionMap enemyHomeMarkers;
 	public PerceptionMap foodMarkers;
 	float nextPossibleRespawnTime;
 	public float radius;

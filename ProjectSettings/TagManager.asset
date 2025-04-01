@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -16,9 +16,9 @@ TagManager:
   - Food
   - Food Pheremone
   - Home Pheremone
-  - Home
+  - MegaHome
   - Wall
-  - 
+  - GigaHome
   - 
   - 
   - 
@@ -44,3 +44,5 @@ TagManager:
   - name: Pheremones
     uniqueID: 2023016125
     locked: 0
+  m_RenderingLayers:
+  - Default

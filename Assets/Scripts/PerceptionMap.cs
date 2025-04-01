@@ -13,8 +13,8 @@ public class PerceptionMap : MonoBehaviour {
 	public float pheremoneSize = 0.05f;
 	public float initialAlpha = 1;
 
-	int numCellsX;
-	int numCellsY;
+	public int numCellsX;
+	public int numCellsY;
 	Vector2 halfSize;
 	float cellSizeReciprocal;
 	Cell[, ] cells;
@@ -45,7 +45,7 @@ public class PerceptionMap : MonoBehaviour {
 		particleEmitParams.startLifetime = antSettings.pheromoneEvaporateTime;
 		particleEmitParams.startSize = pheremoneSize;
 		var m = particleDisplay.main;
-		m.maxParticles = 100 * 1000;
+		m.maxParticles = 100 * 100 * 1000;
 		var c = particleDisplay.colorOverLifetime;
 		c.enabled = true;
 
@@ -66,9 +66,9 @@ public class PerceptionMap : MonoBehaviour {
 		particleDisplay.Emit (particleEmitParams, 1);
 	}
 
-	public int GetAllInCircle (Entry[] result, Vector2 centre) {
+	public int GetAllInCircle (Entry[] result, Vector2 centre, int offset) {
 		Vector2Int cellCoord = CellCoordFromPos (centre);
-		int i = 0;
+		int i = offset;
 		float currentTime = Time.time;
 
 		for (int offsetY = -1; offsetY <= 1; offsetY++) {
@@ -84,7 +84,7 @@ public class PerceptionMap : MonoBehaviour {
 						float currentLifetime = currentTime - currentEntry.creationTime;
 						// Remove expired entries
 						if (currentLifetime > antSettings.pheromoneEvaporateTime) {
-							cell.entries.Remove (currentEntryNode);
+							//cell.entries.Remove (currentEntryNode);
 						}
 						// Check if entry is inside perception radius
 						else if ((currentEntry.position - centre).sqrMagnitude < sqrPerceptionRadius) {
@@ -108,6 +108,38 @@ public class PerceptionMap : MonoBehaviour {
 		int y = (int) ((point.y + halfSize.y) * cellSizeReciprocal);
 		return new Vector2Int (Mathf.Clamp (x, 0, numCellsX - 1), Mathf.Clamp (y, 0, numCellsY - 1));
 	}
+
+	public void ShowAllMarkers()
+	{
+		for (int y = 0; y < numCellsY; y++)
+		{
+			for (int x = 0; x < numCellsX; x++)
+			{
+				var cell = cells[x, y];
+
+				var table = new HashSet<Vector2>();
+				
+				foreach (var entry in cell.entries)
+				{
+					table.Add(entry.position);
+				}
+
+				foreach (var entry in table)
+				{
+					particleEmitParams.startColor = new Color (1 - pheremoneColor.r, 1 - pheremoneColor.g, 1 - pheremoneColor.b, 1);
+					particleEmitParams.position = entry;
+					var tempLifetime= particleEmitParams.startLifetime;
+					var tempSize= particleEmitParams.startSize;
+					particleEmitParams.startLifetime = 5f;
+					particleEmitParams.startSize = 0.1f;
+					particleDisplay.Emit (particleEmitParams, 1);
+					particleEmitParams.startLifetime = tempLifetime;
+					particleEmitParams.startSize = tempSize;
+				} 
+			}
+		}
+	}
+
 	/*
 		void OnDrawGizmosSelected () {
 			if (!Application.isPlaying) {
@@ -152,8 +184,7 @@ public class PerceptionMap : MonoBehaviour {
 		}
 
 		public void Add (Entry entry) {
-			entries.AddLast (entry);
-
+			entries.AddLast(entry);
 		}
 
 	}
